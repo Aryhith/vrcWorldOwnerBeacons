@@ -25,8 +25,9 @@ Currently, there are three different beacons configured to hover over users:
 - VRC Udon Sharp (Found in VRC Creator Companion)
 - "BeaconController.cs" script and "BeaconController.asset" (as well as associated meta files) found in \Assets\zelBeacons\scripts\
 
-#How to Download
-- Download the .zip file.
+# How to Download
+- Download the .zip file next to the repository.
+
 # How To Use
 - Be sure the correct unity version is installed: [VRC Currently Supported Unity Version](https://docs.vrchat.com/docs/current-unity-version).
 - The only required file is essentially the script and its compiled asset. The Prefab should have the script set up, but refer to the picture below to make sure all of the objects are in the correct spot.
