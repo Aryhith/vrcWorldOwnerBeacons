@@ -324,12 +324,16 @@ public class BeaconController : UdonSharpBehaviour
 
         foreach (GameObject obj in adminDisableObjects)
         {
-            obj.SetActive(isAdmin);
+            obj.SetActive(false);
+            Debug.Log("Did the objects get disabled");
         }
-        foreach (GameObject obj in adminEnableObjects)
+
+        foreach (GameObject item in adminEnableObjects)
         {
-            obj.SetActive(isAdmin);
+            item.SetActive(true);
+            Debug.Log("Did the objects get enabled");
         }
+
 
 
         if (checkAdminNamesToAdd)
