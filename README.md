@@ -50,7 +50,8 @@ Currently, there are three different beacons configured to hover over users:
   - Reload Delay: How many seconds the script takes to reload the list of your admins.
   - Is Admin: For testing purposes, i'd leave this to false.
 
-![Beaconscript](https://user-images.githubusercontent.com/94867482/230518433-1758a17d-ac9e-4c75-ad45-51375fc41c49.png)
+
+![Beaconscript](https://user-images.githubusercontent.com/94867482/230518876-2600acc4-f68a-4eaa-b0bc-4030e2c5ed1b.png)
 
 
 # How it works
