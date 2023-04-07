@@ -25,9 +25,11 @@ Currently, there are three different beacons configured to hover over users:
 - VRC Udon Sharp (Found in VRC Creator Companion)
 - "BeaconController.cs" script and "BeaconController.asset" (as well as associated meta files) found in \Assets\zelBeacons\scripts\
 
+#How to Download
+- Download the .zip file.
 # How To Use
 - Be sure the correct unity version is installed: [VRC Currently Supported Unity Version](https://docs.vrchat.com/docs/current-unity-version).
-- The only required file is essentially the script and its compiled asset, however the "beacons.prefab" prefab in \Assets\zelBeacons\prefabs\ is my recommended way to get started
+- The only required file is essentially the script and its compiled asset. The Prefab should have the script set up, but refer to the picture below to make sure all of the objects are in the correct spot.
 - To set up the asset, there are a number of required gameobjects that must be configured and filled into the appropriate parameter slots:
   - Empty: An empty prefab that is used to instantiate and configure empty gameobjects.
   - Beacon Blue: This is the Blue Beacon GameObject that follows the World Creator. (Does not have to be blue)
