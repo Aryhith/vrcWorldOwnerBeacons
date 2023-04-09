@@ -322,15 +322,16 @@ public class BeaconController : UdonSharpBehaviour
 
         Debug.Log("This players admin status is " + isAdmin);
 
+        //need to make sure these use isAdmin from the other foreach line on 314. 
         foreach (GameObject obj in adminDisableObjects)
         {
-            obj.SetActive(false);
+            obj.SetActive(isAdmin);
             Debug.Log("Did the objects get disabled");
         }
 
         foreach (GameObject item in adminEnableObjects)
         {
-            item.SetActive(true);
+            item.SetActive(isAdmin);
             Debug.Log("Did the objects get enabled");
         }
 
