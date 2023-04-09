@@ -83,6 +83,8 @@ public class BeaconController : UdonSharpBehaviour
     private string localName;
     private bool checkAdminNamesToAdd;
     private string recentlyJoinedPlayer;//used in AddGreenBeacons and OnPlayerJoined
+    private bool objectsToEnable = false;
+    private bool objectsToDisable = true;
 
     VRCPlayerApi localPlayer;
     int greenAdminPos = -1;//position in the list of players when iterating over the green admins
@@ -300,7 +302,6 @@ public class BeaconController : UdonSharpBehaviour
         var adminsToAdd = new string[0];
         adminPage = result.Result;
         var newAdminNames = adminPage.Split(new string[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-
         if(onlineAdminNames != null)
         {
             adminsToRemove = GetAdminDifference(oldAdminNames, newAdminNames);
@@ -316,23 +317,30 @@ public class BeaconController : UdonSharpBehaviour
             if (adminName == localName)
             {
                 isAdmin = true;
-                break;
-            }        
+                
+                break;                
+            }
+        
+        }
+        if (isAdmin == true)
+        {
+            objectsToEnable = true;
+            objectsToDisable = false;
+        }
+        else if(isAdmin == false)
+        {
+            objectsToEnable = false;
+            objectsToDisable = true;
         }
 
-        Debug.Log("This players admin status is " + isAdmin);
-
-        //need to make sure these use isAdmin from the other foreach line on 314. 
-        foreach (GameObject obj in adminDisableObjects)
+        foreach (GameObject obj1 in adminDisableObjects)
         {
-            obj.SetActive(isAdmin);
-            Debug.Log("Did the objects get disabled");
+            obj1.SetActive(objectsToDisable);           
         }
 
-        foreach (GameObject item in adminEnableObjects)
+        foreach (GameObject obj2 in adminEnableObjects)
         {
-            item.SetActive(isAdmin);
-            Debug.Log("Did the objects get enabled");
+            obj2.SetActive(objectsToEnable);          
         }
 
 
@@ -352,9 +360,11 @@ public class BeaconController : UdonSharpBehaviour
         {
             AddGreenBeacons(adminsToAdd);
         }
-
         Debug.Log("string loaded admin names");
         Debug.Log("checkAdminNames is set to " + checkAdminNamesToAdd);
+        Debug.Log("isAdmin was set to " + isAdmin);
+        Debug.Log("objectsToEnable was set to " + objectsToEnable);
+        Debug.Log("objectsToDisable was set to " + objectsToDisable);
     }
 
     private void AddGreenBeacons()
