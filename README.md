@@ -1,5 +1,5 @@
 # vrcWorldOwnerBeacons
-Forked from Zelozoics Beacon script after some major updates. Thanks Fairly, Zel, and Squirrelo for help with this!
+Forked from Zealozoics Beacon script after some major updates. Thanks Fairly, Zel, and Squirrelo for help with this!
 Also some basic starting code with Vowgans new tutorial on string loading for admins, that helped a lot.
 
 A Beacon system for use in VRChat worlds to label World Owners, Masters and Admins
@@ -40,7 +40,7 @@ Currently, there are three different beacons configured to hover over users:
   - Update Timer Length: The time in seconds between each "heavy update".
   - Admin Disable Objects: An array that takes objects in world and disable them, Example: colliders disabled to areas only accessible by admins.
   - Admin Enable Objects: An array that takes objects in world and enables them, Example: buttons that only admins can click on.
-  - Instance Owner is Admin: Can be toggled if you would like a player that hosts the world to also be included as an admin. Note: Instance Owners cannot be removed from admin via your admin list if this is toggled...
+  - (Broken for now) Instance Owner is Admin: Can be toggled if you would like a player that hosts the world to also be included as an admin. Note: Instance Owners cannot be removed from admin via your admin list if this is toggled...
   - Green Admin Parent: An empty GameObject that holds all of the instantiated Green Beacon GameObjects when Admins join the world.
   - Green Admin Targets: An empty GameObject that holds all of the target locations for each Green Beacon GameObject.
   - Green Admins To Remove: A list of admins that have left the world and need their Green Beacons (and Targets) destroyed.
