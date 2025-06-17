@@ -18,10 +18,26 @@ public class BeaconController : UdonSharpBehaviour
     public Transform beaconBlue;
     [Tooltip("Name of Player to tie the Blue Beacon to (ex: world creator)")]
     public string worldCreator;
+
+    [Tooltip("Ice Beacon that follows the Player named in [Ice Mentor]")]
+    public Transform beaconIce;
+    [Tooltip("Name of Player to tie the Ice Beacon to (ex: Ice Mentor)")]
+    public string iceMentor;
+
+    [Tooltip("Teal Beacon that follows the Player named in [Teal Dragon])")]
+    public Transform beaconTeal;
+    [Tooltip("Name of Player to tie the Teal Beacon to (ex: Teal Dragon)")]
+    public string tealDragon;
+
     private VRCPlayerApi blueOwner;//VRCPlayerApi object to tie to the blue owner
     private string blueName = "";//populates if the Blue Owner is in the instance
+    private VRCPlayerApi iceOwner;//VRCPlayerApi object to tie to the ice owner
+    private string iceName = "";//populates if the Ice Owner is in the instance
+    private VRCPlayerApi tealOwner;//VRCPlayerApi object to tie to the tealOwner
+    private string tealName = "";//populates if the Teal Owner is in the instance
 
-    [Tooltip("Green Beacon that follows the players named in [AdminNamesParent]")]
+
+    [Tooltip("Green Beacon that follows the players named in the pastebin script")]
     public Transform beaconGreen;
 
     [Tooltip("Red Beacon that follows the World Master (oldest user in instance)")]
@@ -33,14 +49,16 @@ public class BeaconController : UdonSharpBehaviour
     [Tooltip("Time in seconds of each timer iteration (0.5 - 1.0 recommended)")]
     public float updateTimerLength = 0.5f;
 
-    [Tooltip("Parent GameObject holding a list of other GameObjects that detail the UserNames of each admin")]
-    public Transform adminNamesParent;
+    /*Old List, is not referenced anymore. Use a pastebin link instead on the adminslistURL [Tooltip("Parent GameObject holding a list of other GameObjects that detail the UserNames of each admin")]
+    public Transform adminNamesParent;*/
 
     [Tooltip("A list of GameObjects that disables themselves when you are listed in the [Admin Names Parent] list")]
     public GameObject[] adminDisableObjects;
 
     [Tooltip("A list of GameObjects that enable themselves when you are listed in the [Admin Names Parent] list")]
     public GameObject[] adminEnableObjects;
+
+    public GameObject microphoneObject;
 
     public bool instanceOwnerIsAdmin;
 
@@ -86,6 +104,7 @@ public class BeaconController : UdonSharpBehaviour
     private bool objectsToEnable = false;
     private bool objectsToDisable = true;
 
+
     VRCPlayerApi localPlayer;
     int greenAdminPos = -1;//position in the list of players when iterating over the green admins
     VRCPlayerApi[] playerList;//list of players in the instance, updated when needed
@@ -94,7 +113,7 @@ public class BeaconController : UdonSharpBehaviour
     private void Start()
     {
         localName = Networking.LocalPlayer.displayName;
-        _DownloadList();
+        DownloadList();
         //if updatetimer is less than 0.1, may cause severe stuttering. Recommended is still 0.5 - 1.0
         updateTimerLength = Mathf.Max(0.1f, updateTimerLength);
         setBeacons(showBeacons);
@@ -120,6 +139,8 @@ public class BeaconController : UdonSharpBehaviour
         UpdateBeaconBlue();
         UpdateBeaconGreen();
         UpdateBeaconRed();
+        UpdateBeaconIce();
+        UpdateBeaconTeal();
     }
 
     private void UpdateBeaconBlue()
@@ -138,6 +159,43 @@ public class BeaconController : UdonSharpBehaviour
         else
         {
             beaconBlue.transform.position = beaconStartPoint.position;
+        }
+    }
+
+    private void UpdateBeaconIce()
+    {
+
+        if (Utilities.IsValid(iceOwner))
+        {
+            Vector3 iceHeadPosition = iceOwner.GetBonePosition(HumanBodyBones.Head);
+            if (iceHeadPosition.sqrMagnitude < 0.01f)
+            {
+                iceHeadPosition = iceOwner.GetPosition();
+            }
+            Vector3 plumbobIcePosition = new Vector3(iceHeadPosition.x, iceHeadPosition.y + distanceAboveHead, iceHeadPosition.z);
+            beaconIce.transform.position = Vector3.Lerp(beaconIce.transform.position, plumbobIcePosition, blueAndRedTargetSmoothing);
+        }
+        else
+        {
+            beaconIce.transform.position = beaconStartPoint.position;
+        }
+    }
+    private void UpdateBeaconTeal()
+    {
+
+        if (Utilities.IsValid(tealOwner))
+        {
+            Vector3 tealHeadPosition = tealOwner.GetBonePosition(HumanBodyBones.Head);
+            if (tealHeadPosition.sqrMagnitude < 0.01f)
+            {
+                tealHeadPosition = tealOwner.GetPosition();
+            }
+            Vector3 plumbobTealPosition = new Vector3(tealHeadPosition.x, tealHeadPosition.y + distanceAboveHead, tealHeadPosition.z);
+            beaconTeal.transform.position = Vector3.Lerp(beaconTeal.transform.position, plumbobTealPosition, blueAndRedTargetSmoothing);
+        }
+        else
+        {
+            beaconTeal.transform.position = beaconStartPoint.position;
         }
     }
 
@@ -180,6 +238,14 @@ public class BeaconController : UdonSharpBehaviour
                             verticalOffset += beaconSpacing;
                         }
                         if (playerName == blueName)
+                        {
+                            verticalOffset += beaconSpacing;
+                        }
+                        if (playerName == iceName)
+                        {
+                            verticalOffset += beaconSpacing;
+                        }
+                        if (playerName == tealName)
                         {
                             verticalOffset += beaconSpacing;
                         }
@@ -231,7 +297,7 @@ public class BeaconController : UdonSharpBehaviour
             greenBeacon.name = greenAdminID.gameObject.name;
             if (showBeacons)
             {
-
+                greenBeacon.SetActive(true);
             }
             else
             {
@@ -279,6 +345,10 @@ public class BeaconController : UdonSharpBehaviour
             {
                 verticalOffset += beaconSpacing;
             }
+            if (redOwner.displayName == iceName)
+            {
+                verticalOffset += beaconSpacing;
+            }
             Vector3 plumbobRedPosition = new Vector3(redHeadPosition.x, redHeadPosition.y + verticalOffset, redHeadPosition.z);
             beaconRed.transform.position = Vector3.Lerp(beaconRed.transform.position, plumbobRedPosition, blueAndRedTargetSmoothing);
         }
@@ -288,10 +358,10 @@ public class BeaconController : UdonSharpBehaviour
         }
     }
 
-    public void _DownloadList()//grabs the VRCUrl from wherever it is hosted.
+    public void DownloadList()//grabs the VRCUrl from wherever it is hosted.
     {
         VRCStringDownloader.LoadUrl(adminsListUrl, (IUdonEventReceiver)this);
-        SendCustomEventDelayedSeconds(nameof(_DownloadList), reloadDelay);
+        SendCustomEventDelayedSeconds(nameof(DownloadList), reloadDelay);
     }
 
     public override void OnStringLoadSuccess(IVRCStringDownload result)
@@ -326,21 +396,28 @@ public class BeaconController : UdonSharpBehaviour
         {
             objectsToEnable = true;
             objectsToDisable = false;
+            microphoneObject.GetComponent<VRC.SDK3.Components.VRCPickup>().enabled = true;
+            microphoneObject.GetComponent<Collider>().enabled = true;
+
         }
         else if(isAdmin == false)
         {
             objectsToEnable = false;
             objectsToDisable = true;
+            microphoneObject.GetComponent<VRC.SDK3.Components.VRCPickup>().enabled = false;
+            microphoneObject.GetComponent<Collider>().enabled = false;
         }
 
         foreach (GameObject obj1 in adminDisableObjects)
         {
+            if (obj1 == null) { continue; }
             obj1.SetActive(objectsToDisable);           
         }
 
         foreach (GameObject obj2 in adminEnableObjects)
         {
-            obj2.SetActive(objectsToEnable);          
+            if(obj2 == null) { continue; }
+            obj2.SetActive(objectsToEnable);
         }
 
 
@@ -360,11 +437,11 @@ public class BeaconController : UdonSharpBehaviour
         {
             AddGreenBeacons(adminsToAdd);
         }
-        Debug.Log("string loaded admin names");
+        /*Debug.Log("string loaded admin names");
         Debug.Log("checkAdminNames is set to " + checkAdminNamesToAdd);
         Debug.Log("isAdmin was set to " + isAdmin);
         Debug.Log("objectsToEnable was set to " + objectsToEnable);
-        Debug.Log("objectsToDisable was set to " + objectsToDisable);
+        Debug.Log("objectsToDisable was set to " + objectsToDisable);*/
     }
 
     private void AddGreenBeacons()
@@ -379,7 +456,7 @@ public class BeaconController : UdonSharpBehaviour
                 greenToAdd.transform.SetParent(greenAdminsToAdd);
             }
         }
-        Debug.Log("Was Adding a success?");
+        //Debug.Log("Was Adding a success?");
     }
     private void AddGreenBeacons(string[] playersToAdd)
     {
@@ -390,7 +467,7 @@ public class BeaconController : UdonSharpBehaviour
             greenToAdd.name = adminName;
             greenToAdd.transform.SetParent(greenAdminsToAdd);
         }
-        Debug.Log("Was Adding a success?");
+        //Debug.Log("Was Adding a success?");
     }
 
     private void RemoveGreenBeacons(string[] playersToRemove)
@@ -403,7 +480,7 @@ public class BeaconController : UdonSharpBehaviour
             greenAdminToRemove.name = adminName;
             greenAdminToRemove.transform.SetParent(greenAdminsToRemove);              
         }
-        Debug.Log("Was Removing a success?");
+        //Debug.Log("Was Removing a success?");
     }
 
     public string[] GetAdminDifference(string[] originalAdminList, string[] newAdminList)
@@ -439,7 +516,7 @@ public class BeaconController : UdonSharpBehaviour
 
     public override void OnStringLoadError(IVRCStringDownload result)
     {
-        Debug.Log(result.Error);
+        //Debug.Log(result.Error);
     }
 
     private void CheckOnlineAdminNamesTrue()//Happens on the end of OnPlayerJoined, not really needed, but leftover from experimenting with solutions to an old problem. That problem is not there anymore.
@@ -465,11 +542,21 @@ public class BeaconController : UdonSharpBehaviour
         {
             redOwner = player;
             redName = player.displayName;
-            if (worldCreator == player.displayName)
-            {
-                blueOwner = player;
-                blueName = player.displayName;
-            }
+        }
+        if (worldCreator == player.displayName)
+        {
+            blueOwner = player;
+            blueName = player.displayName;
+        }
+        if (iceMentor == player.displayName)
+        {
+            iceOwner = player;
+            iceName = player.displayName;
+        }
+        if (tealDragon == player.displayName)
+        {
+            tealOwner = player;
+            tealName = player.displayName;
         }
         CheckOnlineAdminNamesTrue();
     }
@@ -514,13 +601,22 @@ public class BeaconController : UdonSharpBehaviour
                 blueName = "";
                 blueOwner = null;
             }
+            if (player.displayName == iceMentor)
+            {
+                iceName = "";
+                iceOwner = null;
+            }
+            if (player.displayName == tealDragon)
+            {
+                tealName = "";
+                tealOwner = null;
+            }
         }
     }
 
     //this is the button that can be set in world to toggle beacons on or off.
     public override void Interact()
     {
-        base.Interact();
         toggleBeacons();
     }
 
@@ -543,6 +639,8 @@ public class BeaconController : UdonSharpBehaviour
     {
         beaconRed.gameObject.SetActive(enabled);
         beaconBlue.gameObject.SetActive(enabled);
+        beaconIce.gameObject.SetActive(enabled);
+        beaconTeal.gameObject.SetActive(enabled);
         if (greenAdminParent.childCount > 0)
         {
             for (int i = 0; i < greenAdminParent.childCount; i++)
